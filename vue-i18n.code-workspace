@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "./webview"
+		}
+	],
+  "settings": {
+    "typescript.tsc.autoDetect": "off",
+		"markdown-image.DIY.path": ""
+  }
+}
