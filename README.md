@@ -31,6 +31,7 @@
    ![图 4](assets/others/1710671890941.jpg)     
 7. 最后，点击`导出`按钮，弹出的文件夹选择框选择导出的目的地。确定后就会开始导出，同时会将多语言 Key 使用 `$t('key')` 插入到代码中，只要再在代码中加入实现或导入 `$t` 函数即可。  
    ![图 5](assets/others/1710671988125.jpg)  
+    ![图 7](assets/others/1710674001304.jpg)  
 
 ## 📦 配置
 
@@ -39,7 +40,7 @@
 - `vue-i18n.appKey`: 百度翻译接口 API Key，若不设置则无法自动生成 Key 与自动翻译导出结果。申请方法见[百度翻译文档](http://api.fanyi.baidu.com/product/113)
 - `vue-i18n.i18nFunctionName`: 插入到代码的 i18n 函数名，默认为 `$t`。
 - `vue-i18n.autoTranslateResult`: 是否自动翻译导出结果，默认为 `false`。
-- `vue-i18n.exportLanguageExcel`：是否导出翻译 Excel，默认为 `false`。
+- `vue-i18n.exportLanguageExcel`：是否导出翻译结果 Excel，默认为 `false`。
 - `vue-i18n.languages`: 导出的语言列表，支援的语言列表见[百度翻译文档](http://api.fanyi.baidu.com/product/113)。默认为 `['en']`。
 
 ## ⚙️ 调试

@@ -83,7 +83,7 @@
         "vue-i18n.exportLanguageExcel": {
           "type": "boolean",
           "default": false,
-          "description": "是否导出翻译 Excel"
+          "description": "是否导出翻译结果 Excel"
         },
         "vue-i18n.languages": {
           "type": "array",

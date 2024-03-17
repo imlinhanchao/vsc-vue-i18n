@@ -422,13 +422,13 @@ export class i18nWindow {
     } else {
       file = path.basename(path.dirname(getEditorFilePath(this.editor))) + '_' + file;
     }
-    mkdirs(path.join(folder, 'i18n', 'zh-CN'));
+    mkdirs(path.join(folder, 'i18n', 'zh'));
     const { i18nFunctionName, autoTranslateResult, exportLanguageExcel, languages, appId, appKey } = getConfig();
     this.$t = i18nFunctionName || '$t';
     await this.updateEditorText();
     let i18nText = 'export default {\n' + this.langTexts.map(l => `  ${l.key.match(/^\d/) ? `'${l.key}'` : l.key}: '${l.value.replace(/'/g, '\\$&')}',`).join('\n') + '\n};\n';
 
-    fs.writeFileSync(path.join(folder, 'i18n', 'zh-CN', file + '.ts'), i18nText);
+    fs.writeFileSync(path.join(folder, 'i18n', 'zh', file + '.ts'), i18nText);
 
     if (autoTranslateResult) {
       if (appId === '' || appKey === '') {
