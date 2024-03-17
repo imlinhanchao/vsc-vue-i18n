@@ -55,10 +55,10 @@ extension 的代码可以直接下断点调试。
 
 Webview 代码则在启动的 `扩展开发宿主` 按下 `Ctrl + Shift + I` 启动开发者工具调试。
 
-启动开发者工具后，可按下 `Ctrl + Shift + C` 选择要调试的Webview。然后切换到 `Console` 选项卡，查看 Webview 的 id：
+启动开发者工具后，可按下 `Ctrl + Shift + C` 选择要调试的Webview。然后切换到 `Console` 选项卡，查看 Webview 的 id：  
 ![1709711786527](assets/others/1709711786527.jpg)  
 
-然后切换到 `Source` 选项卡。在左侧的文件列表中该 id 目录，展开找到 `localhost:5173` 即可对 Webview 代码下断点调试。
+然后切换到 `Source` 选项卡。在左侧的文件列表中该 id 目录，展开找到 `localhost:5173` 即可对 Webview 代码下断点调试。  
 ![1709711923903](assets/others/1709711923903.jpg)  
 
 ## 📄 Release Notes
