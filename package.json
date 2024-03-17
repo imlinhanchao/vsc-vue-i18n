@@ -63,12 +63,12 @@
         "vue-i18n.appId": {
           "type": "string",
           "default": "",
-          "description": "百度翻译接口 appId，若不设置则无法自动生成 Key 与自动翻译导出结果。申请方法见[百度翻译文档](http://api.fanyi.baidu.com/product/113)(有免费额度)"
+          "markdownDescription": "百度翻译接口 appId，若不设置则无法自动生成 Key 与自动翻译导出结果。申请方法见[百度翻译文档](http://api.fanyi.baidu.com/product/113)(有免费额度)"
         },
         "vue-i18n.appKey": {
           "type": "string",
           "default": "",
-          "description": "百度翻译接口 API Key，若不设置则无法自动生成 Key 与自动翻译导出结果。申请方法见[百度翻译文档](http://api.fanyi.baidu.com/product/113)(有免费额度)"
+          "markdownDescription": "百度翻译接口 API Key，若不设置则无法自动生成 Key 与自动翻译导出结果。申请方法见[百度翻译文档](http://api.fanyi.baidu.com/product/113)(有免费额度)"
         },
         "vue-i18n.i18nFunctionName": {
           "type": "string",
