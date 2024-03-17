@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://marketplace.visualstudio.com/items?itemName=hancel.vue-i18n">
+  <a href="https://marketplace.visualstudio.com/items?itemName=hancel.front-i18n">
     <img width="200" src="./assets/logo.png">
   </a>
 </p>
