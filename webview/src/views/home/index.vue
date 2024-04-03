@@ -126,6 +126,12 @@ function exportLangs() {
     exportLoading.value = false;
   });
 }
+function appendLangs() {
+  exportLoading.value = true;
+  invoke('append').then(() => {
+    exportLoading.value = false;
+  });
+}
 </script>
 
 <template>
@@ -134,6 +140,11 @@ function exportLangs() {
       <el-tooltip content="导出国际化文件" placement="top">
         <el-button type="primary" link :loading="exportLoading" @click="exportLangs" size="large">
           <Icon v-if="!exportLoading" icon="uil:file-export" :size="20" />
+        </el-button>
+      </el-tooltip>
+      <el-tooltip content="追加到国际化文件" placement="top">
+        <el-button type="primary" link :loading="exportLoading" @click="appendLangs" size="large">
+          <Icon v-if="!exportLoading" icon="streamline:file-add-alternate" :size="20" />
         </el-button>
       </el-tooltip>
       <el-tooltip content="删除选中项目" placement="top">

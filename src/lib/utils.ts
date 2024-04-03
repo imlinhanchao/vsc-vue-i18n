@@ -63,6 +63,20 @@ async function openFolder() {
   }
 }
 
+async function openFile() {
+  const uris = await vscode.window.showOpenDialog({
+      canSelectFiles: true,
+      canSelectFolders: false,
+      canSelectMany: false
+  });
+
+  if (uris && uris.length > 0) {
+    return uris[0].fsPath;
+  } else {
+    return;
+  }
+}
+
 function getSelections (): readonly vscode.Selection[] | null {
   let editor = vscode.window.activeTextEditor;
   if (!editor) {
@@ -257,6 +271,7 @@ export {
   insertToEnd,
   mkdirs,
   openFolder,
+  openFile,
   highlightText,
   getSelections,
   getSelectionByPosition,

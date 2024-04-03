@@ -2,8 +2,8 @@ import * as vscode from 'vscode';
 import exceljs from 'exceljs';
 import fs from 'fs';
 import { Webview } from './webview';
-import { getConfig, getEditorFilePath, getLineContent, getOpenCmd, getRelativePath, goToLine, highlightText, mkdirs, openFolder, replaceText } from './utils';
-import { spawn } from 'child_process';
+import { getConfig, getEditorFilePath, getLineContent, getOpenCmd, getRelativePath, goToLine, highlightText, mkdirs, openFile, openFolder, replaceText } from './utils';
+import { exec } from 'child_process';
 import { ITranslates, translateTexts } from './api';
 import path from 'path';
 import langMap from './langs';
@@ -413,22 +413,34 @@ export class i18nWindow {
   }
 
   // 导出国际化文件
-  async exportFile () {
-    const folder = await openFolder();
-    if (!folder) { return; }
-    let file = path.basename(getEditorFilePath(this.editor), '.vue');
-    if (file === 'index') {
-      file = path.basename(path.dirname(getEditorFilePath(this.editor)));
+  async exportFile (isAppend=false) {
+    let folder: string | undefined;
+    let file: string;
+    let preKey = '';
+    if (!isAppend) {
+      folder = await openFolder();
+      if (!folder) { return; }
+      file = path.basename(getEditorFilePath(this.editor), '.vue');
+      if (file === 'index') {
+        file = path.basename(path.dirname(getEditorFilePath(this.editor)));
+      } else {
+        file = path.basename(path.dirname(getEditorFilePath(this.editor))) + '_' + file;
+      }
+      file += '.ts';
+      mkdirs(path.join(folder, 'i18n', 'zh'));
     } else {
-      file = path.basename(path.dirname(getEditorFilePath(this.editor))) + '_' + file;
+      const filepath = await openFile();
+      if (!filepath) { return; }
+      folder = path.dirname(path.dirname(filepath));
+      file = path.basename(filepath);
+      preKey = path.basename(getEditorFilePath(this.editor), path.extname(getEditorFilePath(this.editor)));
     }
-    mkdirs(path.join(folder, 'i18n', 'zh'));
     const { i18nFunctionName, autoTranslateResult, exportLanguageExcel, languages, appId, appKey } = getConfig();
     this.$t = i18nFunctionName || '$t';
-    await this.updateEditorText();
+    await this.updateEditorText(preKey);
     let i18nText = 'export default {\n' + this.langTexts.map(l => `  ${l.key.match(/^\d/) ? `'${l.key}'` : l.key}: '${l.value.replace(/'/g, '\\$&')}',`).join('\n') + '\n};\n';
 
-    fs.writeFileSync(path.join(folder, 'i18n', 'zh', file + '.ts'), i18nText);
+    fs.writeFileSync(path.join(folder, 'i18n', 'zh', file), i18nText);
 
     if (autoTranslateResult) {
       if (appId === '' || appKey === '') {
@@ -450,8 +462,8 @@ export class i18nWindow {
             });
       
             i18nText = 'export default {\n' + this.langTexts.map(l => `  ${l.key.match(/^\d/) ? `'${l.key}'` : l.key}: '${l.i18n[lang].replace(/'/g, '\\$&')}',`).join('\n') + '\n};\n';
-            mkdirs(path.join(folder, 'i18n', lang));
-            fs.writeFileSync(path.join(folder, 'i18n', lang, file + '.ts'), i18nText);
+            mkdirs(path.join(folder!, 'i18n', lang));
+            fs.writeFileSync(path.join(folder!, 'i18n', lang, file), i18nText);
           } catch (error: any) {
             console.debug(`翻译${langMap[lang]}失败：`, error.message);
           }
@@ -468,7 +480,11 @@ export class i18nWindow {
     ];
     sheet.addRows(this.langTexts.map(lang => ({ key: lang.key, value: lang.value, ...lang.i18n })));
     await workbook.xlsx.writeFile(path.join(folder, 'i18n', 'i18n.xlsx'));
-    spawn(getOpenCmd() + ' ' + folder);
+    exec('explorer.exe "' + folder + '"');
+    setTimeout(() => {
+      this.langTexts = [];
+      this.webView!.panel!.webview.postMessage({ command: 'data', data: this.langTexts });
+    }, 100);
   }
 
   saftRegexp(value: string) {
@@ -480,13 +496,13 @@ export class i18nWindow {
     // 不同类型的标签内容需要有不同插入t函数的模式，这里分别匹配
     const repValue = this.saftRegexp(value);
     let regs: Record<string, RegExp> = {
-      tag: new RegExp(`(?<=<\\/?\\w+[^>]*?>)[^<{}]*${repValue}(?=<)`),
-      key: new RegExp(`(?<=['"]*)([^"'\\s]*?)${repValue}([^"'\\s]*?)(?=([\\s'"]*):\\s)`),
+      tag: new RegExp(`(?<=<\\/?\\w+[^>]*?>)[^<]*${repValue}(?=[^<]*<)`),
+      key: new RegExp(`(['"]*)([^"'\\s]*?)${repValue}([^"'\\s]*?)([\\s'"]*)(?=:\\s*)`),
       keyRaw: new RegExp(`(?<=\`)([^\`]*?)${repValue}([^\`]*?)(\`*)(?=\\]:\\s)`),
       command: new RegExp(`(v-[\\w:\\-.]+)="([^"]*?)${repValue}([^"]*?)"`),
       event: new RegExp(`(@[\\w:\\-.]+)="([^"]*?)${repValue}([^"]*?)"`),
       attr: new RegExp(`(:?[\\w:\\-.]+)="([^"]*?)${repValue}([^"]*?)"`),
-      value: new RegExp(`'([^']*?)${repValue}([^']*?)'`),
+      value: new RegExp(`(["'])([^\\1]*?)${repValue}([^\\1]*?)\\1`),
       raw: new RegExp(`\`[^\`]*?${repValue}[^\`]*?(\`|$)`),
       text: new RegExp(`^\\s*[^<{}]*${repValue}`),
     };
@@ -501,6 +517,9 @@ export class i18nWindow {
           newText = `${mat[2]}${value}${mat[3]}`;
           newText = newText !== value ? ('`' + newText + '`').replace(value, `\${${this.$t}('${key}')}`) : `${this.$t}('${key}')`;
           newText = `:${mat[1]}="${newText}"`;
+        } else {
+          newText = newText.replace(new RegExp(`(['\`])([^\`']*?)${value}([^\`']*?)\\1`), `\`$2\${${this.$t}('${key}')}$3\``)
+            .replace(new RegExp(`\`\\\${\\${this.$t}\\('${key}'\\)}\``), `${this.$t}('${key}')`);
         }
         // 重新计算替换位置
         const start = mat[1].length + mat[2].length + 2;
@@ -518,15 +537,15 @@ export class i18nWindow {
     if (reg === 'key') {
       const mat = regs.key.exec(content);
       if (mat) {
-        let newText = content.slice(mat.index, mat.index + mat[0].length);
+        let newText = content.slice(mat.index + mat[1].length, mat.index + mat[0].length - mat[4].length);
         newText = newText !== value ? ('`' + newText + '`').replace(value, `\${${this.$t}('${key}')}`) : `${this.$t}('${key}')`;
         newText = '[' + newText + ']';
         return {
           type: reg,
           newText,
           offset: {
-            start: mat[1].length,
-            end: mat[2].length,
+            start: mat[1].length + mat[2].length,
+            end: mat[3].length + mat[4].length,
           },
         };
       }
@@ -541,8 +560,8 @@ export class i18nWindow {
           type: reg,
           newText,
           offset: {
-            start: mat[1].length + 1,
-            end: mat[2].length + 1,
+            start: mat[2].length + 1,
+            end: mat[3].length + 1,
           },
         };
       }
@@ -553,8 +572,9 @@ export class i18nWindow {
   }
 
   // 根据值与国际化key替换文本
-  async replaceText (value: string, key: string, range: vscode.Range) {
+  async replaceText (value: string, key: string, range: vscode.Range, prekey='') {
     console.debug('replace text', value, key);
+    key = (prekey ? prekey + '.' : '') + key;
     let lineContent = '';
     for (let i = range.start.line; i <= range.end.line; i++) {
       lineContent += getLineContent(i, this.editor);
@@ -593,7 +613,7 @@ export class i18nWindow {
   }
 
   // 更新编辑器内筛选出的国际化文本
-  async updateEditorText () {
+  async updateEditorText (prekey='') {
     const offsets: any = {};
     let lineOffset = 0;
     for (let i = 0; i < this.langTexts.length; i++) {
@@ -608,7 +628,7 @@ export class i18nWindow {
           p.end.index + this.getLineOffset(offsets[p.end.line + lineOffset], p.end.index)
         );
         highlightText(this.editor, null, p.decoration);
-        let offset = await this.replaceText(lang.value, lang.key, range);
+        let offset = await this.replaceText(lang.value, lang.key, range, prekey);
         if (offset && offset.lineOffset) {
           lineOffset += offset.lineOffset;
         }
@@ -672,6 +692,11 @@ export class i18nWindow {
       // 导出国际化文件
       case 'export': {
         this.exportFile().then(() => this.webView?.responseMessage(message.key, true));
+        break;
+      }
+      // 追加到多语言文件
+      case 'append': {
+        this.exportFile(true).then(() => this.webView?.responseMessage(message.key, true));
         break;
       }
       // 跳转编辑器到指定行
