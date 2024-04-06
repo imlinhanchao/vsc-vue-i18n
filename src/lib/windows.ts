@@ -694,7 +694,7 @@ export class i18nWindow {
         this.exportFile().then(() => this.webView?.responseMessage(message.key, true));
         break;
       }
-      // 追加到多语言文件
+      // 追加到国际化文件
       case 'append': {
         this.exportFile(true).then(() => this.webView?.responseMessage(message.key, true));
         break;

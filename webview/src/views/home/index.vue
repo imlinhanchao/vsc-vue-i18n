@@ -166,10 +166,10 @@ function appendLangs() {
     <el-main>
       <el-table ref="tableRef" :data="langs" style="width: 100%" height="100%">
         <el-table-column type="selection" width="50" />
-        <el-table-column align="center" prop="key" label="多语言 Key">
+        <el-table-column align="center" prop="key" label="国际化 Key">
           <template #header>
             <section class="flex items-center justify-center">
-              <span>多语言 Key</span>
+              <span>国际化 Key</span>
               <el-tooltip content="自动生成 Key" placement="top">
                 <el-button :loading="isKeyLoading" @click="generateKey()" link>
                   <Icon icon="mdi:magic" />

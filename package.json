@@ -4,6 +4,8 @@
   "description": "快速为中文 Vue 项目添加国际化支持",
   "keywords": [
     "vue",
+    "front",
+    "前端",
     "i18n",
     "国际化",
     "多语言"
@@ -21,28 +23,28 @@
   "license": "MIT",
   "repository": "https://github.com/imlinhanchao/vsc-vue-i18n",
   "activationEvents": [
-    "onCommand:vue-i18n.autoRecognition"
+    "onCommand:front-i18n.autoRecognition"
   ],
   "contributes": {
     "commands": [
       {
-        "command": "vue-i18n.autoRecognition",
+        "command": "front-i18n.autoRecognition",
         "title": "自动识别中文",
         "icon": "$(vue-auto-recognition)"
       },
       {
-        "command": "vue-i18n.addText",
-        "title": "添加到多语言"
+        "command": "front-i18n.addText",
+        "title": "添加到国际化"
       },
       {
-        "command": "vue-i18n.removePosition",
+        "command": "front-i18n.removePosition",
         "title": "移除翻译位置"
       }
     ],
     "menus": {
       "editor/title": [
         {
-          "command": "vue-i18n.autoRecognition",
+          "command": "front-i18n.autoRecognition",
           "group": "navigation",
           "when": "editorLangId == vue || editorLangId == javascript || editorLangId == typescript"
         }
@@ -60,32 +62,32 @@
     "configuration": {
       "title": "Vue 国际化开发助手",
       "properties": {
-        "vue-i18n.appId": {
+        "front-i18n.appId": {
           "type": "string",
           "default": "",
           "markdownDescription": "百度翻译接口 appId，若不设置则无法自动生成 Key 与自动翻译导出结果。申请方法见[百度翻译文档](http://api.fanyi.baidu.com/product/113)(有免费额度)"
         },
-        "vue-i18n.appKey": {
+        "front-i18n.appKey": {
           "type": "string",
           "default": "",
           "markdownDescription": "百度翻译接口 API Key，若不设置则无法自动生成 Key 与自动翻译导出结果。申请方法见[百度翻译文档](http://api.fanyi.baidu.com/product/113)(有免费额度)"
         },
-        "vue-i18n.i18nFunctionName": {
+        "front-i18n.i18nFunctionName": {
           "type": "string",
           "default": "$t",
           "description": "插入到代码的 i18n 函数名"
         },
-        "vue-i18n.autoTranslateResult": {
+        "front-i18n.autoTranslateResult": {
           "type": "boolean",
           "default": false,
           "description": "是否自动翻译导出结果"
         },
-        "vue-i18n.exportLanguageExcel": {
+        "front-i18n.exportLanguageExcel": {
           "type": "boolean",
           "default": false,
           "description": "是否导出翻译结果 Excel"
         },
-        "vue-i18n.languages": {
+        "front-i18n.languages": {
           "type": "array",
           "default": [
             "en"
