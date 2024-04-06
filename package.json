@@ -1,6 +1,6 @@
 {
   "name": "front-i18n",
-  "displayName": "Vue i18n Helper",
+  "displayName": "Vue 国际化开发助手",
   "description": "快速为中文 Vue 项目添加国际化支持",
   "keywords": [
     "vue",
@@ -8,7 +8,8 @@
     "前端",
     "i18n",
     "国际化",
-    "多语言"
+    "多语言",
+    "helper"
   ],
   "version": "0.0.2",
   "publisher": "hancel",
